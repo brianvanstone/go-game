@@ -1,4 +1,4 @@
-package tech.notpaper.go.controller;
+package tech.notpaper.sample.controller;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import tech.notpaper.go.model.Note;
-import tech.notpaper.go.repository.NoteRepository;
+import tech.notpaper.sample.model.Note;
+import tech.notpaper.sample.repository.NoteRepository;
 
 @RestController
 @RequestMapping("/notes/api")

@@ -1,4 +1,4 @@
-package tech.notpaper.go.model;
+package tech.notpaper.sample.model;
 
 import java.io.Serializable;
 import java.util.Date;
