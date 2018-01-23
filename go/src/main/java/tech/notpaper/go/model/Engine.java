@@ -81,4 +81,20 @@ public class Engine implements Serializable {
         byte[] encoded = secretKey.getEncoded();
         return DatatypeConverter.printHexBinary(encoded).toLowerCase();
     }
+
+	public Long getId() {
+		return id;
+	}
+
+	public Person getOwner() {
+		return owner;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
 }

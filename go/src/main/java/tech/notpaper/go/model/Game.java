@@ -9,6 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,13 +35,14 @@ public class Game implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@Column
+	@Column(length=10000)
 	private Engine playerOne;
 	
-	@Column
+	@Column(length=10000)
 	private Engine playerTwo;
 	
-	@Column
+	@Lob
+	@Column(length=1000)
 	private Board board;
 	
 	@Column(nullable = false, updatable = false)
@@ -62,5 +64,33 @@ public class Game implements Serializable {
 		this.playerOne = p1;
 		this.playerTwo = p2;
 		return this;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Engine getPlayerOne() {
+		return playerOne;
+	}
+
+	public Engine getPlayerTwo() {
+		return playerTwo;
+	}
+
+	public Board getBoard() {
+		return board;
+	}
+	
+	public String getThisMessage() {
+		return "Fuck off!";
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 }

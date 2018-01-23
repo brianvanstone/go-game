@@ -64,4 +64,24 @@ public class Person implements Serializable {
 		this.bio = bio;
 		return this;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getBio() {
+		return bio;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
 }
