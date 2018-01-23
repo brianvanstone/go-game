@@ -35,6 +35,9 @@ public class Game implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@Column
+	private GameStatus status;
+	
 	@Column(length=10000)
 	private Engine playerOne;
 	
@@ -55,6 +58,11 @@ public class Game implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 	
+	public Game() {
+		super();
+		this.status = GameStatus.ACTIVE;
+	}
+	
 	public Game withBoard(Board board) {
 		this.board = board;
 		return this;
@@ -69,6 +77,10 @@ public class Game implements Serializable {
 	public Long getId() {
 		return id;
 	}
+	
+	public GameStatus getGameStatus() {
+		return status;
+	}
 
 	public Engine getPlayerOne() {
 		return playerOne;
@@ -81,10 +93,6 @@ public class Game implements Serializable {
 	public Board getBoard() {
 		return board;
 	}
-	
-	public String getThisMessage() {
-		return "Fuck off!";
-	}
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -92,5 +100,13 @@ public class Game implements Serializable {
 
 	public Date getUpdatedAt() {
 		return updatedAt;
+	}
+	
+	public enum GameStatus {
+		ACTIVE, ABORTED, COMPLETE;
+	}
+	
+	public void setStatus(GameStatus status) {
+		this.status = status;
 	}
 }
