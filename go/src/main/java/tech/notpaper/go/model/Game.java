@@ -2,6 +2,7 @@ package tech.notpaper.go.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "games")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "messages"}, allowGetters = true)
 public class Game implements Serializable {
 
 	/**
@@ -38,15 +40,21 @@ public class Game implements Serializable {
 	@Column
 	private GameStatus status;
 	
-	@Column(length=10000)
-	private Engine playerOne;
+	@Column
+	private boolean blacksTurn;
 	
 	@Column(length=10000)
-	private Engine playerTwo;
+	private Engine playerBlack;
+	
+	@Column(length=10000)
+	private Engine playerWhite;
 	
 	@Lob
 	@Column(length=1000)
 	private Board board;
+	
+	@OneToMany(mappedBy="game")
+	private Set<Message> messages;
 	
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -61,6 +69,7 @@ public class Game implements Serializable {
 	public Game() {
 		super();
 		this.status = GameStatus.ACTIVE;
+		this.blacksTurn = true;
 	}
 	
 	public Game withBoard(Board board) {
@@ -69,8 +78,8 @@ public class Game implements Serializable {
 	}
 	
 	public Game betweenPlayers(Engine p1, Engine p2) {
-		this.playerOne = p1;
-		this.playerTwo = p2;
+		this.playerBlack = p1;
+		this.playerWhite = p2;
 		return this;
 	}
 
@@ -83,11 +92,11 @@ public class Game implements Serializable {
 	}
 
 	public Engine getPlayerOne() {
-		return playerOne;
+		return playerBlack;
 	}
 
 	public Engine getPlayerTwo() {
-		return playerTwo;
+		return playerWhite;
 	}
 
 	public Board getBoard() {
@@ -108,5 +117,9 @@ public class Game implements Serializable {
 	
 	public void setStatus(GameStatus status) {
 		this.status = status;
+	}
+	
+	public Set<Message> getMessages() {
+		return messages;
 	}
 }
