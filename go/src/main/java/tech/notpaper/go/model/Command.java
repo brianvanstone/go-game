@@ -41,7 +41,7 @@ public class Command implements Serializable {
 	private CommandType command;
 	
 	@Column
-	private List<String> args;
+	private String args;
 	
 	@Column
 	private String gtpCommand;
@@ -64,11 +64,11 @@ public class Command implements Serializable {
 	}
 	
 	public List<String> getArgs() {
-		return args;
+		return Arrays.asList(args.split(" "));
 	}
 
 	public void setArgs(List<String> args) {
-		this.args = args;
+		this.args = String.join(" ", args);
 	}
 
 	public void setCommand(CommandType command) {
@@ -118,7 +118,7 @@ public class Command implements Serializable {
 	}
 	
 	public List<String> getArguments() {
-		return args;
+		return Arrays.asList(args);
 	}
 	
 	public String getGTPCommand() {
@@ -147,12 +147,12 @@ public class Command implements Serializable {
 	}
 	
 	public Command withArgs(List<String> args) {
-		this.args = args;
+		this.args = String.join(" ", args);
 		return this;
 	}
 	
 	public Command withArgs(String... args) {
-		this.args = Arrays.asList(args);
+		this.args = String.join(" ", args);
 		return this;
 	}
 }
