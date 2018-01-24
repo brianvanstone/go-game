@@ -13,6 +13,7 @@ import tech.notpaper.go.model.Board;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Person;
+import tech.notpaper.go.pojo.Command;
 import tech.notpaper.go.repository.BoardRepository;
 import tech.notpaper.go.repository.EngineRepository;
 import tech.notpaper.go.repository.GameRepository;
@@ -34,6 +35,9 @@ public class GameController {
 	@Autowired
 	PersonRepository personRepo;
 	
+	/*
+	 * Test method for whatever I want
+	 */
 	@GetMapping("/test")
 	public ResponseEntity<Game> test() {
 		
@@ -55,6 +59,18 @@ public class GameController {
 		gameRepo.save(game);
 		return ResponseEntity.ok(game);
 	}
+	
+	/*
+	 * Go protocol methods
+	 */
+	@GetMapping("/fetch")
+	public ResponseEntity<Command> fetchCommand() {
+		return null;
+	}
+	
+	/*
+	 * Gets for all models. Eventually will filter results by api key
+	 */
 
 	@GetMapping("/games/{id}")
 	public ResponseEntity<Game> fetchCommand(@PathVariable("id") Long gameId) {

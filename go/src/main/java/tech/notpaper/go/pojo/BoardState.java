@@ -1,4 +1,4 @@
-package tech.notpaper.go.model;
+package tech.notpaper.go.pojo;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
