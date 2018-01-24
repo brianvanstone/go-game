@@ -7,16 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import tech.notpaper.go.model.Board;
+import tech.notpaper.go.model.Command;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Message;
 import tech.notpaper.go.model.Person;
-import tech.notpaper.go.pojo.Command;
-import tech.notpaper.go.pojo.Response;
+import tech.notpaper.go.model.Response;
 import tech.notpaper.go.repository.BoardRepository;
 import tech.notpaper.go.repository.EngineRepository;
 import tech.notpaper.go.repository.GameRepository;
@@ -67,7 +68,7 @@ public class GameController {
 	 * Go protocol methods
 	 */
 	@GetMapping("/fetch")
-	public ResponseEntity<Command> fetchCommand() {
+	public ResponseEntity<Command> fetchCommand(@RequestBody Command command) {
 		return null;
 	}
 	
