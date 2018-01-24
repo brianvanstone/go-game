@@ -3,14 +3,20 @@ package tech.notpaper.go.model;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -43,11 +49,14 @@ public class Command implements Serializable {
 	@Column
 	private String args;
 	
-	@Column
-	private String gtpCommand;
-	
 	@OneToOne
 	private Response response;
+
+	@ManyToOne
+	private Game game;
+	
+	@Column
+	private CommandStatus status;
 
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -58,21 +67,40 @@ public class Command implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt;
-	
-	public Command(CommandType command) {
+
+	public Command setCommand(CommandType command) {
 		this.command = command;
+		return this;
 	}
 	
-	public List<String> getArgs() {
-		return Arrays.asList(args.split(" "));
+	public Command setStatus(CommandStatus status) {
+		this.status = status;
+		return this;
 	}
 
-	public void setArgs(List<String> args) {
+	public Command setResponse(Response response) {
+		this.response = response;
+		return this;
+	}
+	
+	public Command setCommandType(CommandType type) {
+		this.command = type;
+		return this;
+	}
+	
+	public Command setArgs(List<String> args) {
 		this.args = String.join(" ", args);
+		return this;
 	}
-
-	public void setCommand(CommandType command) {
-		this.command = command;
+	
+	public Command setArgs(String... args) {
+		this.args = String.join(" ", args);
+		return this;
+	}
+	
+	public Command setGame(Game game) {
+		this.game = game;
+		return this;
 	}
 
 	public enum CommandType {
@@ -109,7 +137,15 @@ public class Command implements Serializable {
 		}
 	}
 	
+	public enum CommandStatus {
+		PENDING, COMPLETED, ABORTED;
+	}
+	
 	public long getId() {
+		if (id == null) {
+			return -1;
+		}
+		
 		return id;
 	}
 	
@@ -117,12 +153,27 @@ public class Command implements Serializable {
 		return command;
 	}
 	
-	public List<String> getArguments() {
-		return Arrays.asList(args);
+	public Map<String, String> getArgs() {
+		Map<String, String> argMap = new HashMap<>();
+		Iterator<String> argsIter = Arrays.asList(args.split(" ")).iterator();
+		
+		while(argsIter.hasNext()) {
+			argMap.put(argsIter.next(), argsIter.next());
+		}
+		
+		return argMap;
 	}
 	
 	public String getGTPCommand() {
-		return gtpCommand;
+		return id + " " + command + " " + args + "\n";
+	}
+
+	public Response getResponse() {
+		return response;
+	}
+
+	public CommandStatus getStatus() {
+		return status;
 	}
 	
 	public Date getCreatedAt() {
@@ -133,26 +184,10 @@ public class Command implements Serializable {
 		return updatedAt;
 	}
 	
-	public String getGtpCommand() {
-		return gtpCommand;
-	}
-
-	public Response getResponse() {
-		return response;
-	}
-	
-	public Command withCommandType(CommandType type) {
-		this.command = type;
-		return this;
-	}
-	
-	public Command withArgs(List<String> args) {
-		this.args = String.join(" ", args);
-		return this;
-	}
-	
-	public Command withArgs(String... args) {
-		this.args = String.join(" ", args);
-		return this;
+	public static Command genmove(Color color) {
+		return new Command()
+				.setCommand(CommandType.GENMOVE)
+				.setArgs("color", color.toString())
+				.setStatus(CommandStatus.PENDING);
 	}
 }

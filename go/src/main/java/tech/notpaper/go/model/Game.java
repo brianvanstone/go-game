@@ -2,11 +2,15 @@ package tech.notpaper.go.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +25,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import tech.notpaper.go.model.Command.CommandStatus;
 
 @Entity
 @Table(name = "games")
@@ -54,7 +60,7 @@ public class Game implements Serializable {
 	private Board board;
 	
 	@OneToMany(mappedBy="game")
-	private Set<Message> messages;
+	private Set<Command> commands = new HashSet<>();
 	
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -119,7 +125,21 @@ public class Game implements Serializable {
 		this.status = status;
 	}
 	
-	public Set<Message> getMessages() {
-		return messages;
+	public Game addCommand(Command command) {
+		this.commands.add(command);
+		command.setGame(this);
+		return this;
+	}
+	
+	public Command getCommand() {
+		Iterator<Command> iter = commands.iterator();
+		while(iter.hasNext()) {
+			Command c = iter.next();
+			if (c.getStatus().equals(CommandStatus.PENDING) || !iter.hasNext()) {
+				return c;
+			}
+		}
+		
+		throw new AssertionError("Game exists with 0 commands\r\n" + this.toString());
 	}
 }
