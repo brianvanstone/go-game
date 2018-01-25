@@ -96,9 +96,8 @@ public class GameController {
 	}
 	
 	/*
-	 * Gets for all models. Eventually will filter results by api key
+	 * Gets for Game model
 	 */
-
 	@GetMapping("/games/{id}")
 	public ResponseEntity<Game> game(@PathVariable("id") Long gameId) {
 		return ResponseEntity.ok(gameRepo.findOne(gameId));
@@ -107,45 +106,5 @@ public class GameController {
 	@GetMapping("/games")
 	public List<Game> games() {
 		return gameRepo.findAll();
-	}
-	
-	@GetMapping("/people/{id}")
-	public ResponseEntity<Person> person(@PathVariable("id") Long personId) {
-		return ResponseEntity.ok(personRepo.findOne(personId));
-	}
-	
-	@GetMapping("/people")
-	public List<Person> people() {
-		return personRepo.findAll();
-	}
-	
-	@GetMapping("/engines/{id}")
-	public ResponseEntity<Engine> engine(@PathVariable("id") Long engineId) {
-		return ResponseEntity.ok(engineRepo.findOne(engineId));
-	}
-	
-	@GetMapping("/engines")
-	public List<Engine> engines() {
-		return engineRepo.findAll();
-	}
-	
-	@GetMapping("/boards/{id}")
-	public ResponseEntity<Board> board(@PathVariable("id") Long boardId) {
-		return ResponseEntity.ok(boardRepo.findOne(boardId));
-	}
-	
-	@GetMapping("/boards")
-	public List<Board> boards() {
-		return boardRepo.findAll();
-	}
-	
-	@GetMapping("/commands/{id}")
-	public ResponseEntity<Command> command(@PathVariable("id") Long commandId) {
-		return ResponseEntity.ok(commandRepo.findOne(commandId));
-	}
-	
-	@GetMapping("/commands")
-	public List<Command> commands() {
-		return commandRepo.findAll();
 	}
 }
