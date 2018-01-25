@@ -3,8 +3,6 @@ package tech.notpaper.go.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
-import tech.notpaper.go.controller.exceptions.NotFoundException;
-
 public class Error implements Serializable {
 
 	/**

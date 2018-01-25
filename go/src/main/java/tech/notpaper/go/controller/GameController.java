@@ -116,14 +116,43 @@ public class GameController {
 	 */
 	@GetMapping("/games/{id}")
 	public ResponseEntity<Game> game(@PathVariable("id") Long gameId,
-									 @RequestHeader("go-api-key") String apiKey) {
-		return ResponseEntity.ok(gameRepo.findOne(gameId));
+									 @RequestHeader("go-api-key") String apiKey) throws NotFoundException {
+		Game game = gameRepo.findOne(gameId);
+		
+		if (game.getPlayerOne().apikey().equals(apiKey) ||
+				game.getPlayerTwo().apikey().equals(apiKey) ||
+				game.getPlayerOne().getOwner().apikey().equals(apiKey) ||
+				game.getPlayerTwo().getOwner().apikey().equals(apiKey)) {
+			return ResponseEntity.ok(game);
+		} else {
+			throw new NotFoundException("No game with id [" + gameId + "] found");
+		}
 	}
 	
 	@GetMapping("/games")
 	public List<Game> games(@RequestHeader("go-api-key") String apiKey) throws NotFoundException {
-		Engine engine = getEngine(apiKey);
-		return gameRepo.findAll().stream().filter(g -> true).collect(Collectors.toList());
+		try {
+			Engine engine = getEngine(apiKey);
+			return gameRepo
+					.findAll()
+					.stream()
+					.filter(g -> g.getPlayerOne().getId().equals(engine.getId()) ||
+								 g.getPlayerTwo().getId().equals(engine.getId()))
+					.collect(Collectors.toList());
+		} catch (NotFoundException e) {
+			try {
+				Person person = getPerson(apiKey);
+				return gameRepo
+						.findAll()
+						.stream()
+						.filter(g -> g.getPlayerOne().getOwner().getId().equals(person.getId()) ||
+									 g.getPlayerTwo().getOwner().getId().equals(person.getId()))
+						.collect(Collectors.toList());
+			} catch (NotFoundException e2) {
+				throw e;
+			}
+		}
+		
 	}
 	
 	private Engine getEngine(String apiKey) throws NotFoundException {
@@ -132,6 +161,14 @@ public class GameController {
 			throw new NotFoundException("Could not find engine with api key: " + apiKey);
 		}
 		return engine;
+	}
+	
+	private Person getPerson(String apiKey) throws NotFoundException {
+		Person person = personRepo.findOne(Example.of(new Person().setApiKey(apiKey)));
+		if (person == null) {
+			throw new NotFoundException("Could not find engine with api key: " + apiKey);
+		}
+		return person;
 	}
 	
 	private Game getGame(long gameId) throws NotFoundException {

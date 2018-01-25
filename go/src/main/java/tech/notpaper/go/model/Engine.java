@@ -72,6 +72,10 @@ public class Engine implements Serializable {
 	public String getApiKey() {
 		return apiKey;
 	}
+	
+	public String apikey() {
+		return apiKey;
+	}
 
 	public Long getId() {
 		return id;

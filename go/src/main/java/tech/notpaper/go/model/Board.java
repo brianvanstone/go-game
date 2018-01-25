@@ -38,6 +38,9 @@ public class Board implements Serializable {
 	@Column(length=1000)
 	private byte[] boardState;
 	
+	@Column(length=1000)
+	private byte[] prevState;
+	
 	@Column
 	private int size;
 	
@@ -66,5 +69,9 @@ public class Board implements Serializable {
 	
 	public BoardState getBoardState() {
 		return BoardState.fromBytes(boardState);
+	}
+	
+	public void setPreviousState(BoardState state) {
+		this.prevState = state.toBytes();
 	}
 }

@@ -86,6 +86,18 @@ public class BoardState implements Serializable {
 	public byte[] getRawState() {
 		return toBytes();
 	}
+
+	public void setBlackCaps(short blackCaps) {
+		this.blackCaps = blackCaps;
+	}
+
+	public void setWhiteCaps(short whiteCaps) {
+		this.whiteCaps = whiteCaps;
+	}
+	
+	public void placeStone() {
+		
+	}
 	
 	public byte[] toBytes() {
 		ByteBuffer bb = ByteBuffer.allocate(1000);
@@ -118,13 +130,5 @@ public class BoardState implements Serializable {
 		bs.state = state;
 		
 		return bs;
-	}
-
-	public void setBlackCaps(short blackCaps) {
-		this.blackCaps = blackCaps;
-	}
-
-	public void setWhiteCaps(short whiteCaps) {
-		this.whiteCaps = whiteCaps;
 	}
 }
