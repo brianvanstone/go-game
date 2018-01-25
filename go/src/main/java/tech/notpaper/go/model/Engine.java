@@ -70,6 +70,7 @@ public class Engine implements Serializable {
 		return this;
 	}
 	
+	@Deprecated
 	public String getApiKey() {
 		return apiKey;
 	}

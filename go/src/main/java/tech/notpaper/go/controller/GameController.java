@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tech.notpaper.go.controller.exceptions.NotFoundException;
 import tech.notpaper.go.model.Board;
 import tech.notpaper.go.model.Color;
 import tech.notpaper.go.model.Command;
@@ -79,8 +80,6 @@ public class GameController {
 							  .addCommand(command);
 		gameRepo.save(game);
 		
-		
-		
 		return ResponseEntity.ok(gameRepo.findOne(game.getId()));
 	}
 	
@@ -88,23 +87,23 @@ public class GameController {
 	 * Go protocol methods
 	 */
 	@GetMapping("/games/{id}/fetch")
-	public ResponseEntity<Object> fetchCommand(@PathVariable("id") Long gameId,
-												@RequestHeader("go-api-key") String apiKey) {
+	public ResponseEntity<Command> fetchCommand(@PathVariable("id") Long gameId,
+														@RequestHeader("go-api-key") String apiKey)
+																throws NotFoundException {
 		Game game = gameRepo.findOne(gameId);
 		if (game == null) {
-			//TODO 404 game not found
+			throw new NotFoundException("Could not locate game with id: " + gameId);
 		}
 		Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
 		if (engine == null) {
-			//TODO 404 engine not found via api key (should never happen thanks to interceptor)
+			throw new NotFoundException("Could not find engine with api key: " + apiKey);
 		}
 		Optional<Command> opt =  game.commands().stream()
 												.filter(c -> c.getEngine() == engine.getId())
 												.filter(c -> c.getStatus() == CommandStatus.PENDING)
 												.findFirst();
 		if (!opt.isPresent()) {
-			//TODO command not found, return hold command
-			return ResponseEntity.notFound().build();
+			throw new NotFoundException("No command currently available. Try again later");
 		}
 		
 		return ResponseEntity.ok(opt.get());
