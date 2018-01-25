@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -139,5 +141,9 @@ public class Game implements Serializable {
 		}
 		
 		throw new AssertionError("Game exists with 0 commands\r\n" + this.toString());
+	}
+	
+	public List<Command> commands() {
+		return new LinkedList<>(commands);
 	}
 }

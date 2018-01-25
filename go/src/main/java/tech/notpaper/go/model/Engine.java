@@ -97,4 +97,9 @@ public class Engine implements Serializable {
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
+	
+	public Engine setApiKey(String key) {
+		this.apiKey = key;
+		return this;
+	}
 }
