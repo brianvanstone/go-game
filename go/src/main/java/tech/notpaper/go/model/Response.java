@@ -36,16 +36,13 @@ public class Response implements Serializable {
 	private Long id;
 	
 	@Column
-	private boolean result;
+	private ResponseStatus success;
 	
 	@OneToOne
 	private Command command;
 	
 	@Column
 	private String response;
-	
-	@Column
-	private String rawResponse;
 	
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -61,8 +58,8 @@ public class Response implements Serializable {
 		return id;
 	}
 
-	public boolean isResult() {
-		return result;
+	public ResponseStatus getStatus() {
+		return success;
 	}
 
 	public Command getCommand() {
@@ -73,7 +70,14 @@ public class Response implements Serializable {
 		return response;
 	}
 
-	public String getRawResponse() {
-		return rawResponse;
+	public String getGTPCommand() {
+		if (command == null) {
+			return null;
+		}
+		return (success == ResponseStatus.SUCCESS ? "=" : "?") + id + " " + response + "\n\n";
+	}
+	
+	public enum ResponseStatus {
+		SUCCESS, FAILURE;
 	}
 }
