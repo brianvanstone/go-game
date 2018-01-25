@@ -3,20 +3,16 @@ package tech.notpaper.go.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import tech.notpaper.go.model.Board;
 import tech.notpaper.go.model.Color;
 import tech.notpaper.go.model.Command;
-import tech.notpaper.go.model.Command.CommandStatus;
-import tech.notpaper.go.model.Command.CommandType;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Person;
@@ -71,7 +67,7 @@ public class GameController {
 		Board board = new Board().ofSize(19);
 		boardRepo.save(board);
 		
-		Command command = Command.genmove(Color.BLACK);
+		Command command = Command.genmove(Color.BLACK).setEngine(p1);
 		command = commandRepo.save(command);
 		
 		Game game = new Game().withBoard(board)

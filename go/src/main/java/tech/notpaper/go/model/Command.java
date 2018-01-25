@@ -11,11 +11,9 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -42,6 +40,9 @@ public class Command implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
+	@OneToOne
+	private Engine engine;
 
 	@Column
 	private CommandType command;
@@ -102,6 +103,11 @@ public class Command implements Serializable {
 		this.game = game;
 		return this;
 	}
+	
+	public Command setEngine(Engine engine) {
+		this.engine = engine;
+		return this;
+	}
 
 	public enum CommandType {
 		PROTO_V, NAME, VERSION, KNOWN_CMD, LIST_CMDS, QUIT, BOARDSIZE, CLEAR_BOARD, KOMI, PLAY, GENMOVE;
@@ -147,6 +153,10 @@ public class Command implements Serializable {
 		}
 		
 		return id;
+	}
+	
+	public long getEngine() {
+		return engine.getId();
 	}
 	
 	public CommandType getCommand() {
