@@ -24,6 +24,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import tech.notpaper.go.keys.ApiKeyGenerator;
+
 @Entity
 @Table(name = "engines")
 @EntityListeners(AuditingEntityListener.class)
@@ -38,7 +40,7 @@ public class Engine implements Serializable {
 	public Engine() {
 		super();
 		try {
-			this.apiKey = generateApiKey();
+			this.apiKey = ApiKeyGenerator.generateApiKey();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -74,14 +76,6 @@ public class Engine implements Serializable {
 	public String getApiKey() {
 		return apiKey;
 	}
-	
-	private static String generateApiKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(256);
-        SecretKey secretKey = keyGen.generateKey();
-        byte[] encoded = secretKey.getEncoded();
-        return DatatypeConverter.printHexBinary(encoded).toLowerCase();
-    }
 
 	public Long getId() {
 		return id;

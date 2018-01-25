@@ -1,6 +1,7 @@
 package tech.notpaper.go.model;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import tech.notpaper.go.keys.ApiKeyGenerator;
+
 @Entity
 @Table(name = "people")
 @EntityListeners(AuditingEntityListener.class)
@@ -35,6 +38,9 @@ public class Person implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
+	@Column
+	private String apiKey;
 	
 	@OneToMany(mappedBy="owner")
 	private Set<Engine> engines;
@@ -55,6 +61,21 @@ public class Person implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 	
+	public Person() {
+		super();
+		try {
+			this.apiKey = ApiKeyGenerator.generateApiKey();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public Person setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+		return this;
+	}
+	
 	public Person withName(String name) {
 		this.name = name;
 		return this;
@@ -63,6 +84,11 @@ public class Person implements Serializable {
 	public Person withBio(String bio) {
 		this.bio = bio;
 		return this;
+	}
+	
+	@Deprecated
+	public String getApiKey() {
+		return apiKey;
 	}
 
 	public Long getId() {

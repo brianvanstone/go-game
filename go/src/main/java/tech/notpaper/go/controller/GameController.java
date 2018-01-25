@@ -2,6 +2,7 @@ package tech.notpaper.go.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -90,14 +91,10 @@ public class GameController {
 	public ResponseEntity<Command> fetchCommand(@PathVariable("id") Long gameId,
 														@RequestHeader("go-api-key") String apiKey)
 																throws NotFoundException {
-		Game game = gameRepo.findOne(gameId);
-		if (game == null) {
-			throw new NotFoundException("Could not locate game with id: " + gameId);
-		}
-		Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
-		if (engine == null) {
-			throw new NotFoundException("Could not find engine with api key: " + apiKey);
-		}
+		Game game = getGame(gameId);
+		
+		Engine engine = getEngine(apiKey);
+		
 		Optional<Command> opt =  game.commands().stream()
 												.filter(c -> c.getEngine() == engine.getId())
 												.filter(c -> c.getStatus() == CommandStatus.PENDING)
@@ -118,12 +115,30 @@ public class GameController {
 	 * Gets for Game model
 	 */
 	@GetMapping("/games/{id}")
-	public ResponseEntity<Game> game(@PathVariable("id") Long gameId) {
+	public ResponseEntity<Game> game(@PathVariable("id") Long gameId,
+									 @RequestHeader("go-api-key") String apiKey) {
 		return ResponseEntity.ok(gameRepo.findOne(gameId));
 	}
 	
 	@GetMapping("/games")
-	public List<Game> games() {
-		return gameRepo.findAll();
+	public List<Game> games(@RequestHeader("go-api-key") String apiKey) throws NotFoundException {
+		Engine engine = getEngine(apiKey);
+		return gameRepo.findAll().stream().filter(g -> true).collect(Collectors.toList());
+	}
+	
+	private Engine getEngine(String apiKey) throws NotFoundException {
+		Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
+		if (engine == null) {
+			throw new NotFoundException("Could not find engine with api key: " + apiKey);
+		}
+		return engine;
+	}
+	
+	private Game getGame(long gameId) throws NotFoundException {
+		Game game = gameRepo.findOne(gameId);
+		if (game == null) {
+			throw new NotFoundException("Could not locate game with id: " + gameId);
+		}
+		return game;
 	}
 }
