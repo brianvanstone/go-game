@@ -26,6 +26,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import tech.notpaper.go.controller.exceptions.InvalidStateException;
 import tech.notpaper.go.model.Command.CommandStatus;
 
 @Entity
@@ -131,7 +132,7 @@ public class Game implements Serializable {
 		return this;
 	}
 	
-	public Command getCommand() {
+	public Command getCommand() throws InvalidStateException {
 		Iterator<Command> iter = commands.iterator();
 		while(iter.hasNext()) {
 			Command c = iter.next();
@@ -140,7 +141,7 @@ public class Game implements Serializable {
 			}
 		}
 		
-		throw new AssertionError("Game exists with 0 commands\r\n" + this.toString());
+		throw new InvalidStateException("Game exists with 0 commands\r\n" + this.toString());
 	}
 	
 	public List<Command> commands() {

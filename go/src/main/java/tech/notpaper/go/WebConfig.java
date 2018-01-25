@@ -20,7 +20,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(getApiKeyHandler()).addPathPatterns("/**");
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		//super.addInterceptors(registry);
+		super.addInterceptors(registry);
 	}
 }
