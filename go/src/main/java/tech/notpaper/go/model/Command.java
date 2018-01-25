@@ -26,6 +26,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import tech.notpaper.go.pojo.Color;
+
 @Entity
 @Table(name = "commands")
 @EntityListeners(AuditingEntityListener.class)

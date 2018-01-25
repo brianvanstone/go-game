@@ -1,4 +1,4 @@
-package tech.notpaper.go.model;
+package tech.notpaper.go.pojo;
 
 public enum Color {
 	WHITE, BLACK;

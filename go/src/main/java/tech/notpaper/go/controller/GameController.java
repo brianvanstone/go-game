@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tech.notpaper.go.controller.exceptions.NotFoundException;
 import tech.notpaper.go.model.Board;
-import tech.notpaper.go.model.Color;
 import tech.notpaper.go.model.Command;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Person;
+import tech.notpaper.go.pojo.Color;
 import tech.notpaper.go.repository.BoardRepository;
 import tech.notpaper.go.repository.CommandRepository;
 import tech.notpaper.go.repository.EngineRepository;

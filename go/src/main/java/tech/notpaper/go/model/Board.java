@@ -28,7 +28,6 @@ public class Board implements Serializable {
 		super();
 		this.blackCaps = 0;
 		this.whiteCaps = 0;
-		this.ko = "";
 	}
 
 	@Id
@@ -50,9 +49,6 @@ public class Board implements Serializable {
 	@Column
 	private int whiteCaps;
 	
-	@Column
-	private String ko;
-	
 	public Board ofSize(int size) {
 		this.size = size;
 		this.boardState = (new BoardState()).toBytes();
@@ -60,6 +56,9 @@ public class Board implements Serializable {
 	}
 	
 	public void setBoardState(BoardState state) {
+		this.size = state.getSize();
+		this.blackCaps = state.getBlackCaps();
+		this.whiteCaps = state.getWhiteCaps();
 		this.boardState = state.toBytes();
 	}
 	
