@@ -94,7 +94,7 @@ public class GameController {
 				game.getPlayerTwo().getOwner().apikey().equals(apiKey)) {
 			return ResponseEntity.ok(game);
 		} else {
-			throw new NotFoundException("No game with id [" + gameId + "] found");
+			throw new NotFoundException("Could not locate game with id: " + gameId);
 		}
 	}
 	
