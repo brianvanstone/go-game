@@ -1,7 +1,6 @@
 package tech.notpaper.go.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +19,6 @@ import tech.notpaper.go.model.Command;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Person;
-import tech.notpaper.go.model.Response;
-import tech.notpaper.go.model.Command.CommandStatus;
 import tech.notpaper.go.repository.BoardRepository;
 import tech.notpaper.go.repository.CommandRepository;
 import tech.notpaper.go.repository.EngineRepository;
@@ -85,33 +81,6 @@ public class GameController {
 	}
 	
 	/*
-	 * Go protocol methods
-	 */
-	@GetMapping("/games/{id}/fetch")
-	public ResponseEntity<Command> fetchCommand(@PathVariable("id") Long gameId,
-														@RequestHeader("go-api-key") String apiKey)
-																throws NotFoundException {
-		Game game = getGame(gameId);
-		
-		Engine engine = getEngine(apiKey);
-		
-		Optional<Command> opt =  game.commands().stream()
-												.filter(c -> c.getEngine() == engine.getId())
-												.filter(c -> c.getStatus() == CommandStatus.PENDING)
-												.findFirst();
-		if (!opt.isPresent()) {
-			throw new NotFoundException("No command currently available. Try again later");
-		}
-		
-		return ResponseEntity.ok(opt.get());
-	}
-	
-	@PostMapping("/games/{id}/respond")
-	public ResponseEntity<Response> postResponse(@PathVariable("id") Long gameId) {
-		return null;
-	}
-	
-	/*
 	 * Gets for Game model
 	 */
 	@GetMapping("/games/{id}")
@@ -155,6 +124,9 @@ public class GameController {
 		
 	}
 	
+	/*
+	 * private helper methods
+	 */
 	private Engine getEngine(String apiKey) throws NotFoundException {
 		Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
 		if (engine == null) {

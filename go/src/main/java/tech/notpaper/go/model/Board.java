@@ -59,10 +59,6 @@ public class Board implements Serializable {
 		return this;
 	}
 	
-	public Board placeStone() {
-		return this;
-	}
-	
 	public void setBoardState(BoardState state) {
 		this.boardState = state.toBytes();
 	}
@@ -73,5 +69,9 @@ public class Board implements Serializable {
 	
 	public void setPreviousState(BoardState state) {
 		this.prevState = state.toBytes();
+	}
+	
+	public BoardState previousState() {
+		return BoardState.fromBytes(prevState);
 	}
 }
