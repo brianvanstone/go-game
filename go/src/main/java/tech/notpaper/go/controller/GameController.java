@@ -86,7 +86,7 @@ public class GameController {
 	@GetMapping("/games/{id}")
 	public ResponseEntity<Game> game(@PathVariable("id") Long gameId,
 									 @RequestHeader("go-api-key") String apiKey) throws NotFoundException {
-		Game game = gameRepo.findOne(gameId);
+		Game game = getGame(gameId);
 		
 		if (game.getPlayerOne().apikey().equals(apiKey) ||
 				game.getPlayerTwo().apikey().equals(apiKey) ||
