@@ -94,6 +94,16 @@ public class Game implements Serializable {
 		return this;
 	}
 	
+	public Game setPlayerBlack(Engine p1) {
+		this.playerBlack = p1;
+		return this;
+	}
+	
+	public Game setPlayerWhite(Engine p2) {
+		this.playerWhite = p2;
+		return this;
+	}
+	
 	public Game setStatus(GameStatus status) {
 		this.status = status;
 		return this;
