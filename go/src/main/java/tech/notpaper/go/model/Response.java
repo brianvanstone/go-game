@@ -26,11 +26,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class Response implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7441542482129709675L;
 
+	/*
+	 * DB Fields
+	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -42,7 +42,7 @@ public class Response implements Serializable {
 	private Command command;
 	
 	@Column
-	private String response;
+	private String message;
 	
 	@Column(nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -54,8 +54,33 @@ public class Response implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
+	/*
+	 * Setter methods
+	 */
+	public Response setSuccess(ResponseStatus success) {
+		this.success = success;
+		return this;
+	}
+	
+	public Response setCommand(Command command) {
+		this.command = command;
+		return this;
+	}
+	
+	public Response setMessage(String message) {
+		this.message = message;
+		return this;
+	}
+	
+	/*
+	 * Getter methods
+	 */
 	public Long getId() {
 		return id;
+	}
+
+	public ResponseStatus getSuccess() {
+		return success;
 	}
 
 	public ResponseStatus getStatus() {
@@ -67,14 +92,14 @@ public class Response implements Serializable {
 	}
 
 	public String getResponse() {
-		return response;
+		return message;
 	}
 
 	public String getGTPCommand() {
 		if (command == null) {
 			return null;
 		}
-		return (success == ResponseStatus.SUCCESS ? "=" : "?") + id + " " + response + "\n\n";
+		return (success == ResponseStatus.SUCCESS ? "=" : "?") + id + " " + message + "\n\n";
 	}
 	
 	public enum ResponseStatus {

@@ -34,11 +34,11 @@ import tech.notpaper.go.pojo.Color;
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class Command implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4827133150281081683L;
 
+	/*
+	 * DB Fields
+	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -71,6 +71,9 @@ public class Command implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
+	/*
+	 * Setter methods
+	 */
 	public Command setCommand(CommandType command) {
 		this.command = command;
 		return this;
@@ -110,7 +113,60 @@ public class Command implements Serializable {
 		this.engine = engine;
 		return this;
 	}
+	
+	/*
+	 * Getter methods
+	 */
+	public long getId() {
+		if (id == null) {
+			return -1;
+		}
+		
+		return id;
+	}
+	
+	public long getEngine() {
+		return engine.getId();
+	}
+	
+	public CommandType getCommandType() {
+		return command;
+	}
+	
+	public Map<String, String> getArgs() {
+		Map<String, String> argMap = new HashMap<>();
+		Iterator<String> argsIter = Arrays.asList(args.split(" ")).iterator();
+		
+		while(argsIter.hasNext()) {
+			argMap.put(argsIter.next(), argsIter.next());
+		}
+		
+		return argMap;
+	}
+	
+	public String getGTPCommand() {
+		return id + " " + command + " " + args + "\n";
+	}
 
+	public Response getResponse() {
+		return response;
+	}
+
+	public CommandStatus getStatus() {
+		return status;
+	}
+	
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+	
+	/*
+	 * Supporting Types
+	 */
 	public enum CommandType {
 		PROTO_V, NAME, VERSION, KNOWN_CMD, LIST_CMDS, QUIT, BOARDSIZE, CLEAR_BOARD, KOMI, PLAY, GENMOVE;
 		
@@ -149,53 +205,9 @@ public class Command implements Serializable {
 		PENDING, COMPLETED, ABORTED;
 	}
 	
-	public long getId() {
-		if (id == null) {
-			return -1;
-		}
-		
-		return id;
-	}
-	
-	public long getEngine() {
-		return engine.getId();
-	}
-	
-	public CommandType getCommand() {
-		return command;
-	}
-	
-	public Map<String, String> getArgs() {
-		Map<String, String> argMap = new HashMap<>();
-		Iterator<String> argsIter = Arrays.asList(args.split(" ")).iterator();
-		
-		while(argsIter.hasNext()) {
-			argMap.put(argsIter.next(), argsIter.next());
-		}
-		
-		return argMap;
-	}
-	
-	public String getGTPCommand() {
-		return id + " " + command + " " + args + "\n";
-	}
-
-	public Response getResponse() {
-		return response;
-	}
-
-	public CommandStatus getStatus() {
-		return status;
-	}
-	
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-	
+	/*
+	 * Static Commands
+	 */
 	public static Command genmove(Color color) {
 		return new Command()
 				.setCommand(CommandType.GENMOVE)

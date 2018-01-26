@@ -54,26 +54,26 @@ public class GameController {
 	@GetMapping("/test")
 	public ResponseEntity<Game> test() {
 		
-		Person brian = new Person().withName("Brian")
-								   .withBio("This is my first person");
+		Person brian = new Person().setName("Brian")
+								   .setBio("This is my first person");
 		personRepo.save(brian);
-		Engine p1 = new Engine().withOwner(brian);
+		Engine p1 = new Engine().setOwner(brian);
 		engineRepo.save(p1);
 		
-		Person suzy = new Person().withName("Suzy")
-								  .withBio("This is my second person");
+		Person suzy = new Person().setName("Suzy")
+								  .setBio("This is my second person");
 		personRepo.save(suzy);
-		Engine p2 = new Engine().withOwner(suzy);
+		Engine p2 = new Engine().setOwner(suzy);
 		engineRepo.save(p2);
 		
-		Board board = new Board().ofSize(19);
+		Board board = new Board().setSize(19);
 		boardRepo.save(board);
 		
 		Command command = Command.genmove(Color.BLACK).setEngine(p1);
 		command = commandRepo.save(command);
 		
-		Game game = new Game().withBoard(board)
-							  .betweenPlayers(p1, p2)
+		Game game = new Game().setBoard(board)
+							  .setPlayers(p1, p2)
 							  .addCommand(command);
 		gameRepo.save(game);
 		
@@ -89,9 +89,7 @@ public class GameController {
 		Game game = getGame(gameId);
 		
 		if (game.getPlayerOne().apikey().equals(apiKey) ||
-				game.getPlayerTwo().apikey().equals(apiKey) ||
-				game.getPlayerOne().getOwner().apikey().equals(apiKey) ||
-				game.getPlayerTwo().getOwner().apikey().equals(apiKey)) {
+				game.getPlayerTwo().apikey().equals(apiKey)) {
 			return ResponseEntity.ok(game);
 		} else {
 			throw new NotFoundException("Could not locate game with id: " + gameId);
@@ -100,28 +98,13 @@ public class GameController {
 	
 	@GetMapping("/games")
 	public List<Game> games(@RequestHeader("go-api-key") String apiKey) throws NotFoundException {
-		try {
-			Engine engine = getEngine(apiKey);
-			return gameRepo
-					.findAll()
-					.stream()
-					.filter(g -> g.getPlayerOne().getId().equals(engine.getId()) ||
-								 g.getPlayerTwo().getId().equals(engine.getId()))
-					.collect(Collectors.toList());
-		} catch (NotFoundException e) {
-			try {
-				Person person = getPerson(apiKey);
-				return gameRepo
-						.findAll()
-						.stream()
-						.filter(g -> g.getPlayerOne().getOwner().getId().equals(person.getId()) ||
-									 g.getPlayerTwo().getOwner().getId().equals(person.getId()))
-						.collect(Collectors.toList());
-			} catch (NotFoundException e2) {
-				throw e;
-			}
-		}
-		
+		Engine engine = getEngine(apiKey);
+		return gameRepo
+				.findAll()
+				.stream()
+				.filter(g -> g.getPlayerOne().getId().equals(engine.getId()) ||
+							 g.getPlayerTwo().getId().equals(engine.getId()))
+				.collect(Collectors.toList());
 	}
 	
 	/*
@@ -133,14 +116,6 @@ public class GameController {
 			throw new NotFoundException("Could not find engine with api key: " + apiKey);
 		}
 		return engine;
-	}
-	
-	private Person getPerson(String apiKey) throws NotFoundException {
-		Person person = personRepo.findOne(Example.of(new Person().setApiKey(apiKey)));
-		if (person == null) {
-			throw new NotFoundException("Could not find engine with api key: " + apiKey);
-		}
-		return person;
 	}
 	
 	private Game getGame(long gameId) throws NotFoundException {

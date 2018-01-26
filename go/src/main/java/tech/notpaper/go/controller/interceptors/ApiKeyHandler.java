@@ -24,9 +24,6 @@ public class ApiKeyHandler extends HandlerInterceptorAdapter {
 	@Autowired
 	private EngineRepository engineRepo;
 	
-	@Autowired
-	private PersonRepository personRepo;
-	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -43,10 +40,7 @@ public class ApiKeyHandler extends HandlerInterceptorAdapter {
 			
 			Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
 			if (engine == null) {
-				Person p = personRepo.findOne(Example.of(new Person().setApiKey(apiKey)));
-				if (p == null) {
-					throw new NotFoundException("Unable to find an engine or person matching apikey");
-				}
+				throw new NotFoundException("Unable to find an engine for apikey " + apiKey);
 			}
 		} catch (NotFoundException e) {
 			response.setContentType("application/json");
@@ -57,7 +51,7 @@ public class ApiKeyHandler extends HandlerInterceptorAdapter {
 					.setStatus(HttpStatus.BAD_REQUEST.value())
 					.setPath(request.getServletPath());
 			response.getWriter().write(mapper.writeValueAsString(error));
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			response.setStatus(error.getStatus());
 			
 			return false;
 		}

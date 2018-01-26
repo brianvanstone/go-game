@@ -32,14 +32,14 @@ import tech.notpaper.go.model.Command.CommandStatus;
 @Entity
 @Table(name = "games")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "messages"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "commands"}, allowGetters = true)
 public class Game implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8700063968062543317L;
 
+	/*
+	 * DB Fields
+	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -79,17 +79,34 @@ public class Game implements Serializable {
 		this.blacksTurn = true;
 	}
 	
-	public Game withBoard(Board board) {
+	/*
+	 * Setter methods
+	 */
+	public Game setBoard(Board board) {
 		this.board = board;
 		return this;
 	}
 	
-	public Game betweenPlayers(Engine p1, Engine p2) {
+	public Game setPlayers(Engine p1, Engine p2) {
 		this.playerBlack = p1;
 		this.playerWhite = p2;
 		return this;
 	}
+	
+	public Game setStatus(GameStatus status) {
+		this.status = status;
+		return this;
+	}
+	
+	public Game addCommand(Command command) {
+		this.commands.add(command);
+		command.setGame(this);
+		return this;
+	}
 
+	/*
+	 * Getter methods
+	 */
 	public Long getId() {
 		return id;
 	}
@@ -118,20 +135,6 @@ public class Game implements Serializable {
 		return updatedAt;
 	}
 	
-	public enum GameStatus {
-		ACTIVE, ABORTED, COMPLETE;
-	}
-	
-	public void setStatus(GameStatus status) {
-		this.status = status;
-	}
-	
-	public Game addCommand(Command command) {
-		this.commands.add(command);
-		command.setGame(this);
-		return this;
-	}
-	
 	public Command getCommand() throws InvalidStateException {
 		Iterator<Command> iter = commands.iterator();
 		while(iter.hasNext()) {
@@ -144,7 +147,11 @@ public class Game implements Serializable {
 		throw new InvalidStateException("Game exists with 0 commands\r\n" + this.toString());
 	}
 	
-	public List<Command> commands() {
+	public List<Command> getCommands() {
 		return new LinkedList<>(commands);
+	}
+	
+	public enum GameStatus {
+		ACTIVE, ABORTED, COMPLETE;
 	}
 }

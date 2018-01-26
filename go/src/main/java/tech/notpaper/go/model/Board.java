@@ -19,16 +19,7 @@ import tech.notpaper.go.pojo.BoardState;
 @EntityListeners(AuditingEntityListener.class)
 public class Board implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4167899384475985232L;
-	
-	public Board() {
-		super();
-		this.blackCaps = 0;
-		this.whiteCaps = 0;
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,7 +40,13 @@ public class Board implements Serializable {
 	@Column
 	private int whiteCaps;
 	
-	public Board ofSize(int size) {
+	public Board() {
+		super();
+		this.blackCaps = 0;
+		this.whiteCaps = 0;
+	}
+	
+	public Board setSize(int size) {
 		this.size = size;
 		this.boardState = (new BoardState()).toBytes();
 		return this;
@@ -62,12 +59,12 @@ public class Board implements Serializable {
 		this.boardState = state.toBytes();
 	}
 	
-	public BoardState getBoardState() {
-		return BoardState.fromBytes(boardState);
-	}
-	
 	public void setPreviousState(BoardState state) {
 		this.prevState = state.toBytes();
+	}
+	
+	public BoardState getBoardState() {
+		return BoardState.fromBytes(boardState);
 	}
 	
 	public BoardState previousState() {
