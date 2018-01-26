@@ -28,4 +28,8 @@ public class EngineController {
 	public List<Engine> engines() {
 		return engineRepo.findAll();
 	}
+	
+	public static Engine humanEngine() {
+		return new Engine().setName("Human").setDescription("Used when placing calls to the api as the user");
+	}
 }

@@ -56,14 +56,16 @@ public class GameController {
 		
 		Person brian = new Person().setName("Brian")
 								   .setBio("This is my first person");
+		Engine p1 = new Engine();
+		brian.addEngine(p1);
 		personRepo.save(brian);
-		Engine p1 = new Engine().setOwner(brian);
 		engineRepo.save(p1);
 		
 		Person suzy = new Person().setName("Suzy")
 								  .setBio("This is my second person");
+		Engine p2 = new Engine();
+		suzy.addEngine(p2);
 		personRepo.save(suzy);
-		Engine p2 = new Engine().setOwner(suzy);
 		engineRepo.save(p2);
 		
 		Board board = new Board().setSize(19);

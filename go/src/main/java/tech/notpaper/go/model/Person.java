@@ -2,6 +2,7 @@ package tech.notpaper.go.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,21 +15,23 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import tech.notpaper.go.repository.EngineRepository;
 
 @Entity
 @Table(name = "people")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "engines"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class Person implements Serializable {
-	public Set<Engine> getEngines() {
-		return engines;
-	}
 
 	/**
 	 * 
@@ -44,7 +47,7 @@ public class Person implements Serializable {
 	private Long id;
 	
 	@OneToMany(mappedBy="owner")
-	private Set<Engine> engines;
+	private Set<Engine> engines = new LinkedHashSet<>();
 	
 	@Column
 	private String name;
@@ -66,13 +69,6 @@ public class Person implements Serializable {
 	 * Setter methods
 	 */
 	
-	public Person() {
-		this.engines.add(new Engine()
-				.setOwner(this)
-				.setName("Human")
-				.setDescription("Used when making API calls on behalf of a user"));
-	}
-	
 	public Person setName(String name) {
 		this.name = name;
 		return this;
@@ -80,6 +76,12 @@ public class Person implements Serializable {
 	
 	public Person setBio(String bio) {
 		this.bio = bio;
+		return this;
+	}
+	
+	public Person addEngine(Engine engine) {
+		this.engines.add(engine);
+		engine.setOwner(this);
 		return this;
 	}
 
@@ -97,6 +99,11 @@ public class Person implements Serializable {
 
 	public String getBio() {
 		return bio;
+	}
+	
+	@JsonIgnore
+	public Set<Engine> getEngines() {
+		return engines;
 	}
 
 	public Date getCreatedAt() {
