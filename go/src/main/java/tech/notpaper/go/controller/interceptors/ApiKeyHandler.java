@@ -33,20 +33,20 @@ public class ApiKeyHandler extends HandlerInterceptorAdapter {
 		
 		try {
 			String apiKey = request.getHeader("go-api-key");
-			if (apiKey != null) {
-				if (apiKey.equals("backdoor")) {
-					return true;
-				}
-				Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
-				
-				if (engine == null) {
-					Person p = personRepo.findOne(Example.of(new Person().setApiKey(apiKey)));
-					if (p == null) {
-						throw new NotFoundException("Unable to find an engine or person matching apikey");
-					}
-				}
-			} else {
+			if (apiKey == null) {
 				throw new NotFoundException("go-api-key header is required");
+			}
+			
+			if (apiKey.equals("backdoor")) {
+				return true;
+			}
+			
+			Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
+			if (engine == null) {
+				Person p = personRepo.findOne(Example.of(new Person().setApiKey(apiKey)));
+				if (p == null) {
+					throw new NotFoundException("Unable to find an engine or person matching apikey");
+				}
 			}
 		} catch (NotFoundException e) {
 			response.setContentType("application/json");
