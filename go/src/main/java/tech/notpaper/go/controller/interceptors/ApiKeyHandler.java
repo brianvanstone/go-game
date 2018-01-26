@@ -14,9 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tech.notpaper.go.controller.exceptions.NotFoundException;
 import tech.notpaper.go.model.Engine;
-import tech.notpaper.go.model.Person;
 import tech.notpaper.go.repository.EngineRepository;
-import tech.notpaper.go.repository.PersonRepository;
 import tech.notpaper.go.pojo.Error;
 
 public class ApiKeyHandler extends HandlerInterceptorAdapter {

@@ -42,7 +42,6 @@ public class GTPController {
 												@RequestHeader("go-api-key") String apiKey)
 																throws NotFoundException {
 		Game game = getGame(gameId);
-		
 		Engine engine = getEngine(apiKey);
 		Command command = game.getCommands().stream().filter(c -> c.getStatus() == CommandStatus.PENDING).findFirst().get();
 		if (command == null || !engine.getId().equals(command.getEngine().getId())) {
