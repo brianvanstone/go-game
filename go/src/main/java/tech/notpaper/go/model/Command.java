@@ -24,6 +24,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import tech.notpaper.go.pojo.Color;
@@ -31,7 +32,7 @@ import tech.notpaper.go.pojo.Color;
 @Entity
 @Table(name = "commands")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id"}, allowGetters = true)
 public class Command implements Serializable {
 	
 	private static final long serialVersionUID = 4827133150281081683L;
@@ -117,16 +118,12 @@ public class Command implements Serializable {
 	/*
 	 * Getter methods
 	 */
-	public long getId() {
+	public Long getId() {
 		if (id == null) {
-			return -1;
+			return -1l;
 		}
 		
 		return id;
-	}
-	
-	public long getEngine() {
-		return engine.getId();
 	}
 	
 	public CommandType getCommandType() {
@@ -134,6 +131,10 @@ public class Command implements Serializable {
 	}
 	
 	public Map<String, String> getArgs() {
+		if (args == null) {
+			return null;
+		}
+		
 		Map<String, String> argMap = new HashMap<>();
 		Iterator<String> argsIter = Arrays.asList(args.split(" ")).iterator();
 		
@@ -146,6 +147,10 @@ public class Command implements Serializable {
 	
 	public String getGTPCommand() {
 		return id + " " + command + " " + args + "\n";
+	}
+	
+	public Engine getEngine() {
+		return engine;
 	}
 
 	public Response getResponse() {

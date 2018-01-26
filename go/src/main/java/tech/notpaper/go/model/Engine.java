@@ -19,6 +19,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import tech.notpaper.go.keys.ApiKeyGenerator;
@@ -26,7 +27,7 @@ import tech.notpaper.go.keys.ApiKeyGenerator;
 @Entity
 @Table(name = "engines", indexes= {@Index(name = "engines_apikey_index", columnList="apiKey", unique=true)})
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "apiKey"}, allowGetters = true)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id", "owner"}, allowGetters = true)
 public class Engine implements Serializable {
 
 	private static final long serialVersionUID = 7146285825378271516L;
@@ -96,28 +97,24 @@ public class Engine implements Serializable {
 	/*
 	 * Getter methods
 	 */
-	public String getApiKey() {
-		return apiKey;
-	}
-	
-	public String apikey() {
-		return apiKey;
-	}
-
 	public Long getId() {
 		return id;
 	}
-	
+
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	public Person getOwner() {
+		return owner;
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public String getDescription() {
 		return description;
-	}
-
-	public Person getOwner() {
-		return owner;
 	}
 
 	public Date getCreatedAt() {

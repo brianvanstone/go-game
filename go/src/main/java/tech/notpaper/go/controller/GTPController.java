@@ -39,17 +39,13 @@ public class GTPController {
 	 */
 	@GetMapping("/games/{id}/fetch")
 	public ResponseEntity<Command> fetchCommand(@PathVariable("id") Long gameId,
-														@RequestHeader("go-api-key") String apiKey)
+												@RequestHeader("go-api-key") String apiKey)
 																throws NotFoundException {
 		Game game = getGame(gameId);
 		
 		Engine engine = getEngine(apiKey);
-		
-		Command command = commandRepo.findOne(
-				Example.of(new Command()
-						.setEngine(engine)
-						.setStatus(CommandStatus.PENDING)));
-		if (command == null) {
+		Command command = game.getCommands().stream().filter(c -> c.getStatus() == CommandStatus.PENDING).findFirst().get();
+		if (command == null || !engine.getId().equals(command.getEngine().getId())) {
 			throw new NotFoundException("No command currently available. Try again later");
 		}
 		

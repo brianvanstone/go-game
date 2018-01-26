@@ -79,6 +79,8 @@ public class GameController {
 							  .addCommand(command);
 		gameRepo.save(game);
 		
+		flushAllRepos();
+		
 		return ResponseEntity.ok(gameRepo.findOne(game.getId()));
 	}
 	
@@ -90,8 +92,8 @@ public class GameController {
 									 @RequestHeader("go-api-key") String apiKey) throws NotFoundException {
 		Game game = getGame(gameId);
 		
-		if (game.getPlayerOne().apikey().equals(apiKey) ||
-				game.getPlayerTwo().apikey().equals(apiKey)) {
+		if (game.getPlayerOne().getApiKey().equals(apiKey) ||
+				game.getPlayerTwo().getApiKey().equals(apiKey)) {
 			return ResponseEntity.ok(game);
 		} else {
 			throw new NotFoundException("Could not locate game with id: " + gameId);
@@ -126,5 +128,14 @@ public class GameController {
 			throw new NotFoundException("Could not locate game with id: " + gameId);
 		}
 		return game;
+	}
+	
+	private void flushAllRepos() {
+		boardRepo.flush();
+		engineRepo.flush();
+		gameRepo.flush();
+		personRepo.flush();
+		commandRepo.flush();
+		responseRepo.flush();
 	}
 }
