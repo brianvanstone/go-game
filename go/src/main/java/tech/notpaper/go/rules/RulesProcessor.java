@@ -12,6 +12,7 @@ import tech.notpaper.go.controller.exceptions.InvalidResponseException;
 import tech.notpaper.go.controller.exceptions.NotFoundException;
 import tech.notpaper.go.controller.exceptions.UnsupportedCommandException;
 import tech.notpaper.go.model.Command;
+import tech.notpaper.go.model.Command.CommandStatus;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Response;
 import tech.notpaper.go.model.Response.ResponseStatus;
@@ -112,6 +113,9 @@ public class RulesProcessor {
 			engine.setName(response.getResponse());
 			Assert.assertEquals("Unable to update name for engine", response.getResponse(), engine.getName());
 			engineRepo.save(engine);
+			
+			command.setStatus(CommandStatus.COMPLETED);
+			commandRepo.save(command);
 		} catch (AssertionError e) {
 			r.setStatus(ResponseStatus.FAILURE)
 			 .setMessage(e.getMessage());
@@ -127,6 +131,10 @@ public class RulesProcessor {
 			Engine engine = command.getEngine();
 			engine.setVersion(response.getResponse());
 			Assert.assertEquals("Unable to udpate version for engine", response.getResponse(), engine.getVersion());
+			engineRepo.save(engine);
+			
+			command.setStatus(CommandStatus.COMPLETED);
+			commandRepo.save(command);
 		} catch (AssertionError e) {
 			r.setStatus(ResponseStatus.FAILURE)
 			 .setMessage(e.getMessage());
@@ -162,6 +170,9 @@ public class RulesProcessor {
 			}
 			
 			Assert.assertEquals("Required commands are missing: " + missingCommands, 0, missingCommands.size());
+			
+			command.setStatus(CommandStatus.COMPLETED);
+			commandRepo.save(command);
 		} catch (AssertionError e) {
 			r.setStatus(ResponseStatus.FAILURE)
 			 .setMessage(e.getMessage());
