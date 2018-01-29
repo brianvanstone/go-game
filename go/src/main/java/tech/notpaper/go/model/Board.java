@@ -32,18 +32,16 @@ public class Board implements Serializable {
 	private byte[] prevState;
 	
 	@Column
-	private int size;
+	private Integer size;
 	
 	@Column
-	private int blackCaps;
+	private Integer blackCaps;
 	
 	@Column
-	private int whiteCaps;
+	private Integer whiteCaps;
 	
 	public Board() {
 		super();
-		this.blackCaps = 0;
-		this.whiteCaps = 0;
 	}
 	
 	public Board setSize(int size) {
