@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,8 +78,6 @@ public class GameController {
 							  .addCommand(command);
 		gameRepo.save(game);
 		
-		flushAllRepos();
-		
 		return ResponseEntity.ok(gameRepo.findOne(game.getId()));
 	}
 	
@@ -115,7 +112,7 @@ public class GameController {
 	 * private helper methods
 	 */
 	private Engine getEngine(String apiKey) throws NotFoundException {
-		Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
+		Engine engine = engineRepo.findByApiKey(apiKey);
 		if (engine == null) {
 			throw new NotFoundException("Could not find engine with api key: " + apiKey);
 		}
@@ -128,14 +125,5 @@ public class GameController {
 			throw new NotFoundException("Could not locate game with id: " + gameId);
 		}
 		return game;
-	}
-	
-	private void flushAllRepos() {
-		boardRepo.flush();
-		engineRepo.flush();
-		gameRepo.flush();
-		personRepo.flush();
-		commandRepo.flush();
-		responseRepo.flush();
 	}
 }

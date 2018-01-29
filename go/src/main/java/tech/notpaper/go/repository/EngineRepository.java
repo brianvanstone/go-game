@@ -7,5 +7,5 @@ import tech.notpaper.go.model.Engine;
 
 @Repository
 public interface EngineRepository extends JpaRepository<Engine, Long> {
-
+	public Engine findByApiKey(String apikey);
 }

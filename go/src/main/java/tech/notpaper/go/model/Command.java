@@ -14,6 +14,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -24,10 +25,12 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import tech.notpaper.go.pojo.Color;
 
 @Entity
-@Table(name = "commands")
+@Table(name = "commands", indexes= {@Index(name = "engine_index", columnList="engine_id", unique=true)})
 @EntityListeners(AuditingEntityListener.class)
 public class Command implements Serializable {
 	
@@ -163,6 +166,11 @@ public class Command implements Serializable {
 
 	public Date getUpdatedAt() {
 		return updatedAt;
+	}
+	
+	@JsonIgnore
+	public Game getGame() {
+		return game;
 	}
 	
 	/*

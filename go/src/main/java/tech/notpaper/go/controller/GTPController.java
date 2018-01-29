@@ -1,7 +1,6 @@
 package tech.notpaper.go.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +15,6 @@ import tech.notpaper.go.model.Command;
 import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Response;
-import tech.notpaper.go.model.Command.CommandStatus;
 import tech.notpaper.go.repository.CommandRepository;
 import tech.notpaper.go.repository.EngineRepository;
 import tech.notpaper.go.repository.GameRepository;
@@ -43,10 +41,7 @@ public class GTPController {
 																throws NotFoundException {
 		Game game = getGame(gameId);
 		Engine engine = getEngine(apiKey);
-		Command command = game.getCommands().stream().filter(c -> c.getStatus() == CommandStatus.PENDING).findFirst().get();
-		if (command == null || !engine.getId().equals(command.getEngine().getId())) {
-			throw new NotFoundException("No command currently available. Try again later");
-		}
+		Command command = getCommand(game, engine);
 		
 		return ResponseEntity.ok(command);
 	}
@@ -61,7 +56,7 @@ public class GTPController {
 	 * private helper methods
 	 */
 	private Engine getEngine(String apiKey) throws NotFoundException {
-		Engine engine = engineRepo.findOne(Example.of(new Engine().setApiKey(apiKey)));
+		Engine engine = engineRepo.findByApiKey(apiKey);
 		if (engine == null) {
 			throw new NotFoundException("Could not find engine with api key: " + apiKey);
 		}
@@ -74,5 +69,13 @@ public class GTPController {
 			throw new NotFoundException("Could not locate game with id: " + gameId);
 		}
 		return game;
+	}
+	
+	private Command getCommand(Game game, Engine engine) throws NotFoundException {
+		Command command = commandRepo.findByEngine(engine);
+		if (command == null || !command.getGame().getId().equals(game.getId())) {
+			throw new NotFoundException("Could not locate command for engine with id: " + engine.getId());
+		}
+		return command;
 	}
 }
