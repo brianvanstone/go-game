@@ -25,7 +25,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import tech.notpaper.go.controller.exceptions.InvalidStateException;
 import tech.notpaper.go.model.Command.CommandStatus;
@@ -33,7 +32,6 @@ import tech.notpaper.go.model.Command.CommandStatus;
 @Entity
 @Table(name = "games")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class Game implements Serializable {
 
 	private static final long serialVersionUID = -8700063968062543317L;

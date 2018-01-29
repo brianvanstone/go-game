@@ -19,14 +19,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import tech.notpaper.go.keys.ApiKeyGenerator;
 
 @Entity
 @Table(name = "engines", indexes= {@Index(name = "engines_apikey_index", columnList="apiKey", unique=true)})
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id", "owner"}, allowGetters = true)
 public class Engine implements Serializable {
 
 	private static final long serialVersionUID = 7146285825378271516L;

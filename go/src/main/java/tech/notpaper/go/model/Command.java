@@ -24,14 +24,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import tech.notpaper.go.pojo.Color;
 
 @Entity
 @Table(name = "commands")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id"}, allowGetters = true)
 public class Command implements Serializable {
 	
 	private static final long serialVersionUID = 4827133150281081683L;
