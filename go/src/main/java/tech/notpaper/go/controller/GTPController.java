@@ -62,7 +62,7 @@ public class GTPController {
 	private Engine getEngine(String apiKey) throws NotFoundException {
 		Engine engine = engineRepo.findByApiKey(apiKey);
 		if (engine == null) {
-			throw new NotFoundException("Could not find engine with api key: " + apiKey);
+			throw new NotFoundException("Could not locate engine [apikey: " + apiKey + "]");
 		}
 		return engine;
 	}
@@ -70,7 +70,7 @@ public class GTPController {
 	private Game getGame(long gameId) throws NotFoundException {
 		Game game = gameRepo.findOne(gameId);
 		if (game == null) {
-			throw new NotFoundException("Could not locate game with id: " + gameId);
+			throw new NotFoundException("Could not locate game [id: " + gameId + "]");
 		}
 		return game;
 	}
@@ -78,7 +78,10 @@ public class GTPController {
 	private Command getCommand(Game game, Engine engine) throws NotFoundException {
 		Command command = commandRepo.findByEngine(engine);
 		if (command == null || !command.getGame().getId().equals(game.getId())) {
-			throw new NotFoundException("Could not locate command for engine with id: " + engine.getId());
+			throw new NotFoundException("Could not locate command for "
+										+ "game [id: " + command.getGame().getId() + "] "
+										+ "and "
+										+ "engine [id: " + engine.getId() + "]");
 		}
 		return command;
 	}
