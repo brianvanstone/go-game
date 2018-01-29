@@ -49,12 +49,15 @@ public class Game implements Serializable {
 	@Column
 	private boolean blacksTurn;
 	
-	@Column(length=10000)
+	@Column
 	private Engine playerBlack;
 	
-	@Column(length=10000)
+	@Column
 	private Engine playerWhite;
 	
+	@Column
+	private Engine winner;
+
 	@Lob
 	@Column(length=1000)
 	private Board board;
@@ -101,6 +104,11 @@ public class Game implements Serializable {
 		this.playerWhite = p2;
 		return this;
 	}
+
+	public Game setWinner(Engine winner) {
+		this.winner = winner;
+		return this;
+	}
 	
 	public Game setStatus(GameStatus status) {
 		this.status = status;
@@ -123,17 +131,23 @@ public class Game implements Serializable {
 	public GameStatus getGameStatus() {
 		return status;
 	}
-
-	public Engine getPlayerOne() {
-		return playerBlack;
-	}
-
-	public Engine getPlayerTwo() {
-		return playerWhite;
+	
+	public Engine getWinner() {
+		return winner;
 	}
 
 	public Board getBoard() {
 		return board;
+	}
+
+	@JsonIgnore
+	public Engine getPlayerBlack() {
+		return playerBlack;
+	}
+
+	@JsonIgnore
+	public Engine getPlayerWhite() {
+		return playerWhite;
 	}
 
 	public Date getCreatedAt() {

@@ -89,8 +89,8 @@ public class GameController {
 									 @RequestHeader("go-api-key") String apiKey) throws NotFoundException {
 		Game game = getGame(gameId);
 		
-		if (game.getPlayerOne().getApiKey().equals(apiKey) ||
-				game.getPlayerTwo().getApiKey().equals(apiKey)) {
+		if (game.getPlayerBlack().getApiKey().equals(apiKey) ||
+				game.getPlayerWhite().getApiKey().equals(apiKey)) {
 			return ResponseEntity.ok(game);
 		} else {
 			throw new NotFoundException("Could not locate game with id: " + gameId);
@@ -103,8 +103,8 @@ public class GameController {
 		return gameRepo
 				.findAll()
 				.stream()
-				.filter(g -> g.getPlayerOne().getId().equals(engine.getId()) ||
-							 g.getPlayerTwo().getId().equals(engine.getId()))
+				.filter(g -> g.getPlayerBlack().getId().equals(engine.getId()) ||
+							 g.getPlayerWhite().getId().equals(engine.getId()))
 				.collect(Collectors.toList());
 	}
 	
