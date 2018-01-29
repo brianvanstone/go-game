@@ -1,14 +1,19 @@
 package tech.notpaper.go.pojo;
 
-import tech.notpaper.go.model.Command.CommandStatus;
+import tech.notpaper.go.model.Response.ResponseStatus;
 
 public class CommandResponse {
-	private CommandStatus status;
+	private ResponseStatus status;
 	private String message;
-	private boolean stateChange;
+	private boolean boardStateChanged;
 	private BoardState newBoardState;
 	
-	public CommandResponse setStatus(CommandStatus status) {
+	public CommandResponse() {
+		this.status = ResponseStatus.SUCCESS;
+		this.boardStateChanged = false;
+	}
+	
+	public CommandResponse setStatus(ResponseStatus status) {
 		this.status = status;
 		return this;
 	}
@@ -18,8 +23,8 @@ public class CommandResponse {
 		return this;
 	}
 	
-	public CommandResponse setStateChange(boolean stateChange) {
-		this.stateChange = stateChange;
+	public CommandResponse setBoardStateChanged(boolean stateChange) {
+		this.boardStateChanged = stateChange;
 		return this;
 	}
 	
@@ -28,7 +33,7 @@ public class CommandResponse {
 		return this;
 	}
 	
-	public CommandStatus getStatus() {
+	public ResponseStatus getStatus() {
 		return status;
 	}
 	
@@ -36,8 +41,8 @@ public class CommandResponse {
 		return message;
 	}
 	
-	public boolean isStateChange() {
-		return stateChange;
+	public boolean isBoardStateChanged() {
+		return boardStateChanged;
 	}
 	
 	public BoardState getNewBoardState() {

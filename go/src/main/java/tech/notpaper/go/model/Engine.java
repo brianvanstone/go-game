@@ -43,6 +43,9 @@ public class Engine implements Serializable {
 
 	@Column
 	private String name;
+
+	@Column
+	private String version;
 	
 	@Column
 	private String description;
@@ -79,6 +82,11 @@ public class Engine implements Serializable {
 		this.name = name;
 		return this;
 	}
+	
+	public Engine setVersion(String version) {
+		this.version = version;
+		return this;
+	}
 
 	public Engine setDescription(String description) {
 		this.description = description;
@@ -107,6 +115,10 @@ public class Engine implements Serializable {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getVersion() {
+		return version;
 	}
 
 	public String getDescription() {

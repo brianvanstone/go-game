@@ -1,84 +1,252 @@
 package tech.notpaper.go.rules;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Assert;
+
 import tech.notpaper.go.controller.exceptions.InvalidResponseException;
+import tech.notpaper.go.controller.exceptions.NotFoundException;
+import tech.notpaper.go.controller.exceptions.UnsupportedCommandException;
 import tech.notpaper.go.model.Command;
+import tech.notpaper.go.model.Engine;
 import tech.notpaper.go.model.Response;
+import tech.notpaper.go.model.Response.ResponseStatus;
 import tech.notpaper.go.pojo.CommandResponse;
+import tech.notpaper.go.repository.*;
 
 public class RulesProcessor {
 	
-	public static CommandResponse processResonseFor(Response response) throws InvalidResponseException {
-		Command command = response.getCommand();
+	private BoardRepository boardRepo;
+	private CommandRepository commandRepo;
+	private EngineRepository engineRepo;
+	private GameRepository gameRepo;
+	private PersonRepository personRepo;
+	private ResponseRepository responseRepo;
+	
+	private static final Set<String> requiredCommands = new HashSet<String>() {{
+		add("protocol_version");
+		add("name");
+		add("version");
+		add("known_command");
+		add("list_commands");
+		add("quit");
+		add("boardsize");
+		add("clear_board");
+		add("komi");
+		add("play");
+		add("genmove");
+	}};
+
+	public RulesProcessor(BoardRepository boardRepo,
+							CommandRepository commandRepo,
+							EngineRepository engineRepo,
+							GameRepository gameRepo,
+							PersonRepository personRepo,
+							ResponseRepository responseRepo) {
+		this.boardRepo = boardRepo;
+		this.commandRepo = commandRepo;
+		this.engineRepo = engineRepo;
+		this.gameRepo = gameRepo;
+		this.personRepo = personRepo;
+		this.responseRepo = responseRepo;
+	}
+	
+	public CommandResponse processResonseFor(Response response) throws InvalidResponseException {
+		Command command;
+		try {
+			command = getCommand(response.getId());
+		} catch (NotFoundException e) {
+			throw new InvalidResponseException("Response ID must match to Command ID. " + e.getMessage(), e);
+		}
 		
 		switch(command.getCommandType()) {
 		case PROTO_V:
-			return processResponseForProtoVersion(response);
+			return processResponseForProtoVersion(command, response);
 		case NAME:
-			return processResponseForName(response);
+			return processResponseForName(command, response);
 		case VERSION:
-			return processResponseForVersion(response);
+			return processResponseForVersion(command, response);
 		case KNOWN_CMD:
-			return processResponseForKnownCommand(response);
+			return processResponseForKnownCommand(command, response);
 		case BOARDSIZE:
-			return processResponseForBoardsize(response);
+			return processResponseForBoardsize(command, response);
 		case CLEAR_BOARD:
-			return processResponseForClearBoard(response);
+			return processResponseForClearBoard(command, response);
 		case GENMOVE:
-			return processResponseForGenmove(response);
+			return processResponseForGenmove(command, response);
 		case KOMI:
-			return processResponseForKomi(response);
+			return processResponseForKomi(command, response);
 		case LIST_CMDS:
-			return processResponseForListCommands(response);
+			return processResponseForListCommands(command, response);
 		case PLAY:
-			return processResponseForPlay(response);
+			return processResponseForPlay(command, response);
 		case QUIT:
-			return processResponseForQuit(response);
+			return processResponseForQuit(command, response);
 		default:
 			throw new InvalidResponseException("Response provided is invalid");
 		}
 	}
 	
-	private static CommandResponse processResponseForProtoVersion(Response response) {
-		return null;
+	private CommandResponse processResponseForProtoVersion(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			Assert.assertEquals("GTP Proto version must be 2", "2", response.getResponse());
+		} catch (AssertionError e) {
+			r.setStatus(ResponseStatus.FAILURE)
+			 .setMessage(e.getMessage());
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForName(Response response) {
-		return null;
+	private CommandResponse processResponseForName(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			Engine engine = command.getEngine();
+			engine.setName(response.getResponse());
+			Assert.assertEquals("Unable to update name for engine", response.getResponse(), engine.getName());
+			engineRepo.save(engine);
+		} catch (AssertionError e) {
+			r.setStatus(ResponseStatus.FAILURE)
+			 .setMessage(e.getMessage());
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForVersion(Response response) {
-		return null;
+	private CommandResponse processResponseForVersion(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			Engine engine = command.getEngine();
+			engine.setVersion(response.getResponse());
+			Assert.assertEquals("Unable to udpate version for engine", response.getResponse(), engine.getVersion());
+		} catch (AssertionError e) {
+			r.setStatus(ResponseStatus.FAILURE)
+			 .setMessage(e.getMessage());
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForKnownCommand(Response response) {
-		return null;
+	private CommandResponse processResponseForKnownCommand(Command command, Response response) {
+		throw new UnsupportedCommandException("known_command not currently supported");
+		/*CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;*/
 	}
 	
-	private static CommandResponse processResponseForListCommands(Response response) {
-		return null;
+	private CommandResponse processResponseForListCommands(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			Set<String> commands = new HashSet<>(Arrays.asList(response.getResponse().split(" ")));
+			List<String> missingCommands = new LinkedList<>();
+			
+			for(String reqCommand : requiredCommands) {
+				if (!commands.contains(reqCommand)) {
+					missingCommands.add(reqCommand);
+				}
+			}
+			
+			Assert.assertEquals("Required commands are missing: " + missingCommands, 0, missingCommands.size());
+		} catch (AssertionError e) {
+			r.setStatus(ResponseStatus.FAILURE)
+			 .setMessage(e.getMessage());
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForQuit(Response response) {
-		return null;
+	private CommandResponse processResponseForQuit(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForBoardsize(Response response) {
-		return null;
+	private CommandResponse processResponseForBoardsize(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForClearBoard(Response response) {
-		return null;
+	private CommandResponse processResponseForClearBoard(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForKomi(Response response) {
-		return null;
+	private CommandResponse processResponseForKomi(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForPlay(Response response) {
-		return null;
+	private CommandResponse processResponseForPlay(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;
 	}
 	
-	private static CommandResponse processResponseForGenmove(Response response) {
-		return null;
+	private CommandResponse processResponseForGenmove(Command command, Response response) {
+		CommandResponse r = new CommandResponse();
+		
+		try {
+			
+		} catch (AssertionError e) {
+			
+		}
+		
+		return r;
+	}
+	
+	private Command getCommand(Long id) throws NotFoundException {
+		Command command = commandRepo.findOne(id);
+		if (command == null) {
+			throw new NotFoundException("Could not locate command [id: " + id + "]");
+		}
+		return command;
 	}
 }

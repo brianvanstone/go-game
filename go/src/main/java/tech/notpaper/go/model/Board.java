@@ -25,6 +25,7 @@ public class Board implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	//TODO implement SGF File format and store as binary
 	@Column(length=1000)
 	private byte[] boardState;
 	
