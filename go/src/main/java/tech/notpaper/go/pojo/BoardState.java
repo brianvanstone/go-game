@@ -66,9 +66,10 @@ public class BoardState implements Serializable {
 		return l;
 	}
 	
-	public void setSize(int size) {
+	public BoardState setSize(int size) {
 		this.size = (short) size;
 		state = empty(size);
+		return this;
 	}
 
 	public int getBlackCaps() {
@@ -81,6 +82,10 @@ public class BoardState implements Serializable {
 
 	public int getSize() {
 		return size;
+	}
+	
+	public List<List<State>> getState() {
+		return state;
 	}
 
 	public byte[] getRawState() {
@@ -111,6 +116,28 @@ public class BoardState implements Serializable {
 		}
 		
 		return bb.array();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof BoardState)) {
+			return false;
+		}
+		
+		byte[] otherRaw = ((BoardState) obj).getRawState();
+		byte[] thisRaw = getRawState();
+		
+		if (otherRaw.length != thisRaw.length) {
+			return false;
+		}
+		
+		for(int i = 0; i < otherRaw.length; i++) {
+			if (otherRaw[i] != thisRaw[i]) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	public static BoardState fromBytes(byte[] bytes) {

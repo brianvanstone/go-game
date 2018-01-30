@@ -149,6 +149,17 @@ public class Game implements Serializable {
 	public Engine getPlayerWhite() {
 		return playerWhite;
 	}
+	
+	@JsonIgnore
+	public Engine getOtherPlayer(Engine e) {
+		if (e.getId().equals(getPlayerBlack().getId())) {
+			return getPlayerBlack();
+		} else if (e.getId().equals(getPlayerWhite().getId())) {
+			return getPlayerWhite();
+		} else {
+			throw new IllegalArgumentException("Engine specified was not a player involved in the game");
+		}
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;

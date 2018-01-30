@@ -11,6 +11,7 @@ import org.junit.Assert;
 import tech.notpaper.go.controller.exceptions.InvalidResponseException;
 import tech.notpaper.go.controller.exceptions.NotFoundException;
 import tech.notpaper.go.controller.exceptions.UnsupportedCommandException;
+import tech.notpaper.go.model.Board;
 import tech.notpaper.go.model.Command;
 import tech.notpaper.go.model.Command.CommandStatus;
 import tech.notpaper.go.model.Engine;
@@ -18,6 +19,7 @@ import tech.notpaper.go.model.Game;
 import tech.notpaper.go.model.Game.GameStatus;
 import tech.notpaper.go.model.Response;
 import tech.notpaper.go.model.Response.ResponseStatus;
+import tech.notpaper.go.pojo.BoardState;
 import tech.notpaper.go.pojo.CommandResponse;
 import tech.notpaper.go.repository.*;
 
@@ -30,6 +32,7 @@ public class RulesProcessor {
 	private PersonRepository personRepo;
 	private ResponseRepository responseRepo;
 	
+	@SuppressWarnings("serial")
 	private static final Set<String> requiredCommands = new HashSet<String>() {{
 		add("protocol_version");
 		add("name");
@@ -103,7 +106,7 @@ public class RulesProcessor {
 	private CommandResponse processResponseForProtoVersion(Command command, Response response) {
 		CommandResponse r = new CommandResponse();
 		
-		Assert.assertEquals("GTP Proto version must be 2", "2", response.getResponse());
+		Assert.assertEquals("GTP Protocol Version must be 2", "2", response.getResponse());
 		
 		command.setStatus(CommandStatus.COMPLETED);
 		
@@ -192,7 +195,9 @@ public class RulesProcessor {
 		
 		Game game = command.getGame();
 		game.setStatus(GameStatus.COMPLETE);
-		Assert.assertEquals("Unable to quit the game", GameStatus.COMPLETE, game.getGameStatus());
+		Assert.assertEquals("Unable to quit the game. Could not update game status", GameStatus.COMPLETE, game.getGameStatus());
+		game.setWinner(game.getOtherPlayer(command.getEngine()));
+		Assert.assertEquals("Unable to quit the game. Could not update winner", game.getWinner(), game.getOtherPlayer(command.getEngine()));
 		
 		command.setStatus(CommandStatus.COMPLETED);
 		Assert.assertEquals("Unable to update Command status", CommandStatus.COMPLETED, command.getStatus());
@@ -206,26 +211,37 @@ public class RulesProcessor {
 		return r;
 	}
 	
-	private CommandResponse processResponseForBoardsize(Command command, Response response) {
+	private CommandResponse processResponseForClearBoard(Command command, Response response) {
 		CommandResponse r = new CommandResponse();
 		
-		try {
-			
-		} catch (AssertionError e) {
-			
-		}
+		Game game = command.getGame();
+		Board board = game.getBoard();
+		board.clear();
+		Assert.assertEquals("Unable to clear board", board.getBoardState(), new BoardState());
+		
+		boardRepo.save(board);
+		
+		r.setMessage("Board cleared successfully");
 		
 		return r;
 	}
 	
-	private CommandResponse processResponseForClearBoard(Command command, Response response) {
+	private CommandResponse processResponseForBoardsize(Command command, Response response) {
 		CommandResponse r = new CommandResponse();
 		
-		try {
-			
-		} catch (AssertionError e) {
-			
-		}
+		Game game = command.getGame();
+		
+		int requestedSize = Integer.parseInt(response.getResponse());
+		
+		game.setBoard(new Board().setSize(requestedSize));
+		
+		Assert.assertEquals("Unable to reset board size", game.getBoard().getBoardState().getSize(), requestedSize);
+		Assert.assertEquals("Unable to update reset board state", game.getBoard().getBoardState(), new BoardState().setSize(requestedSize));
+		
+		boardRepo.save(game.getBoard());
+		gameRepo.save(game);
+		
+		r.setMessage("Board resized successfully");
 		
 		return r;
 	}
@@ -233,11 +249,7 @@ public class RulesProcessor {
 	private CommandResponse processResponseForKomi(Command command, Response response) {
 		CommandResponse r = new CommandResponse();
 		
-		try {
-			
-		} catch (AssertionError e) {
-			
-		}
+		
 		
 		return r;
 	}
@@ -245,11 +257,7 @@ public class RulesProcessor {
 	private CommandResponse processResponseForPlay(Command command, Response response) {
 		CommandResponse r = new CommandResponse();
 		
-		try {
-			
-		} catch (AssertionError e) {
-			
-		}
+		
 		
 		return r;
 	}
@@ -257,11 +265,7 @@ public class RulesProcessor {
 	private CommandResponse processResponseForGenmove(Command command, Response response) {
 		CommandResponse r = new CommandResponse();
 		
-		try {
-			
-		} catch (AssertionError e) {
-			
-		}
+		
 		
 		return r;
 	}
