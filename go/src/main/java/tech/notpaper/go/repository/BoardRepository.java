@@ -3,9 +3,9 @@ package tech.notpaper.go.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import tech.notpaper.go.model.Note;
+import tech.notpaper.go.model.Board;
 
 @Repository
-public interface NoteRepository extends JpaRepository<Note, Long> {
+public interface BoardRepository extends JpaRepository<Board, Long> {
 
 }
