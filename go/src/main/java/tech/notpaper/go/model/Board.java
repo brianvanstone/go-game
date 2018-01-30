@@ -63,4 +63,8 @@ public class Board implements Serializable {
 	public BoardState getBoardState() {
 		return BoardState.fromBytes(boardState);
 	}
+	
+	public int getSize() {
+		return size;
+	}
 }

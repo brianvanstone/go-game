@@ -235,8 +235,8 @@ public class RulesProcessor {
 		
 		game.setBoard(new Board().setSize(requestedSize));
 		
-		Assert.assertEquals("Unable to reset board size", game.getBoard().getBoardState().getSize(), requestedSize);
-		Assert.assertEquals("Unable to update reset board state", game.getBoard().getBoardState(), new BoardState().setSize(requestedSize));
+		Assert.assertEquals("Unable to reset board size", game.getBoard().getSize(), requestedSize);
+		Assert.assertEquals("Unable to reset board state", game.getBoard().getBoardState(), new BoardState().setSize(requestedSize));
 		
 		boardRepo.save(game.getBoard());
 		gameRepo.save(game);
