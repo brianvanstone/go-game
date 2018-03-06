@@ -1,6 +1,11 @@
 package tech.notpaper.go.model;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +13,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,10 +30,12 @@ public class Board implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
-	//TODO implement SGF File format and store as binary
+	
 	@Column(length=1000)
 	private byte[] boardState;
+	
+	@Column(length=1000)
+	private byte[] prevState;
 	
 	@Column
 	private Integer size;
@@ -37,6 +45,9 @@ public class Board implements Serializable {
 	
 	@Column
 	private Integer whiteCaps;
+	
+	@OneToMany(mappedBy="board")
+	private Set<Move> moves;
 	
 	public Board() {
 		super();
@@ -52,6 +63,7 @@ public class Board implements Serializable {
 		this.size = state.getSize();
 		this.blackCaps = state.getBlackCaps();
 		this.whiteCaps = state.getWhiteCaps();
+		this.prevState = boardState;
 		this.boardState = state.toBytes();
 	}
 	
@@ -67,4 +79,19 @@ public class Board implements Serializable {
 	public int getSize() {
 		return size;
 	}
+	
+	public List<Move> getMoves() {
+		List<Move> sortedMoves = new LinkedList<>(moves);
+		
+		Collections.sort(sortedMoves, moveSorter);
+		
+		return sortedMoves;
+	}
+	
+	private static Comparator<Move> moveSorter = new Comparator<Move>() {
+		@Override
+		public int compare(Move move1, Move move2) {
+			return move1.getCreatedAt().compareTo(move2.getCreatedAt());
+		}
+	};
 }
